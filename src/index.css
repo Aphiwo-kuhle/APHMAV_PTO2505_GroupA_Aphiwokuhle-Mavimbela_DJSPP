@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* LIGHT THEME */
+.light {
+  background-color: white;
+  color: black;
+}
+
+.dark {
+  background-color: #121212;
+  color: white;
+}
+
+/* Make buttons visible in both modes */
+button {
+  padding: 10px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+
+html,
+body,
+#root {
+  height: 100%;
+}

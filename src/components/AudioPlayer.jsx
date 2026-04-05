@@ -1,24 +1,26 @@
 import { useRef, useState, useEffect } from "react";
 
-function AudioPlayer() {
+function AudioPlayer({ currentAudio }) {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const audioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
-
   const togglePlay = () => {
+    if (!audioRef.current) return;
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {
       audioRef.current.play();
     }
+
     setIsPlaying(!isPlaying);
   };
 
-  // Update progress
   useEffect(() => {
     const audio = audioRef.current;
+
+    if (!audio) return;
 
     const updateProgress = () => {
       const percent = (audio.currentTime / audio.duration) * 100;
@@ -31,25 +33,25 @@ function AudioPlayer() {
       audio.removeEventListener("timeupdate", updateProgress);
     };
   }, []);
-
-  // Seek audio
-  const handleSeek = (e) => {
-    const audio = audioRef.current;
-    const newTime = (e.target.value / 100) * audio.duration;
-    audio.currentTime = newTime;
-    setProgress(e.target.value);
+useEffect(() => {
+  const handleBeforeUnload = (e) => {
+    if (isPlaying) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
   };
 
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, [isPlaying]);
   return (
-    <div style={{
-      position: "fixed",
-      bottom: 0,
-      width: "100%",
-      background: "#222",
-      color: "white",
-      padding: "10px"
-    }}>
-      <audio ref={audioRef} src={audioUrl}></audio>
+    <div className="player">
+      <p>{currentAudio ? currentAudio.title : "No audio selected"}</p>
+
+      <audio ref={audioRef} src={currentAudio?.url}></audio>
 
       <button onClick={togglePlay}>
         {isPlaying ? "Pause" : "Play"}
@@ -58,11 +60,18 @@ function AudioPlayer() {
       <input
         type="range"
         value={progress}
-        onChange={handleSeek}
-        style={{ width: "100%" }}
+        onChange={(e) => {
+          const audio = audioRef.current;
+          const newTime = (e.target.value / 100) * audio.duration;
+          audio.currentTime = newTime;
+          setProgress(e.target.value);
+        }}
       />
     </div>
   );
+
+
+
 }
 
 export default AudioPlayer;

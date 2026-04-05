@@ -2,56 +2,38 @@ import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import AudioPlayer from "./components/AudioPlayer";
 import Carousel from "./components/Carousel";
+import Layout from "./components/Layout";
+import ShowDetails from "./components/ShowDetails";
+import { useNavigate } from "react-router-dom";
 
-// 🔥 HOME COMPONENT
+// HOME
 function Home() {
-  const [favs, setFavs] = useState([]);
-
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("favourites")) || [];
-    setFavs(stored);
-  }, []);
-
-  const toggleFavourite = () => {
-    const existing = favs.find((item) => item.id === 1);
-
-    let updated;
-
-    if (existing) {
-      updated = favs.filter((item) => item.id !== 1);
-    } else {
-      updated = [
-        ...favs,
-        {
-          id: 1,
-          title: "Sample Episode",
-          show: "Sample Show",
-          season: "Season 1",
-          addedAt: new Date().toISOString()
-        }
-      ];
-    }
-
-    setFavs(updated);
-    localStorage.setItem("favourites", JSON.stringify(updated));
-  };
-
-  const isFav = favs.some((item) => item.id === 1);
+  const navigate = useNavigate();
 
   return (
     <div>
-      <h2>Home Page</h2>
+      <h2 className="section-title">Recommended Shows</h2>
 
       <Carousel />
 
-      <button onClick={toggleFavourite}>
-        {isFav ? "💔 Remove Favourite" : "❤️ Add Favourite"}
-      </button>
+      <div className="grid">
+        {[1,2,3,4,5,6].map((item) => (
+          <div
+            className="card"
+            key={item}
+            onClick={() => navigate(`/show/${item}`)}
+          >
+            <div className="card-img"></div>
+            <h3>Podcast Title</h3>
+            <p>🎧 3 seasons</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-// 🔥 FAVOURITES COMPONENT
+// FAVOURITES
 function Favourites() {
   const [favs, setFavs] = useState([]);
   const [sort, setSort] = useState("newest");
@@ -61,40 +43,68 @@ function Favourites() {
     setFavs(stored);
   }, []);
 
+  // SORTING
   const sortedFavs = [...favs].sort((a, b) => {
-    if (sort === "az") return a.title.localeCompare(b.title);
-    if (sort === "za") return b.title.localeCompare(a.title);
     if (sort === "newest") return new Date(b.addedAt) - new Date(a.addedAt);
     if (sort === "oldest") return new Date(a.addedAt) - new Date(b.addedAt);
+    if (sort === "A-Z") return a.title.localeCompare(b.title);
+    if (sort === "Z-A") return b.title.localeCompare(a.title);
   });
+
+  // GROUP BY SHOW
+  const grouped = sortedFavs.reduce((acc, item) => {
+    if (!acc[item.show]) acc[item.show] = [];
+    acc[item.show].push(item);
+    return acc;
+  }, {});
+
+  const removeFav = (id) => {
+    const updated = favs.filter((item) => item.id !== id);
+    localStorage.setItem("favourites", JSON.stringify(updated));
+    setFavs(updated);
+  };
 
   return (
     <div>
-      <h2>Favourites</h2>
+      <h2>❤️ Favourite Episodes</h2>
 
-      <select onChange={(e) => setSort(e.target.value)}>
-        <option value="newest">Newest</option>
-        <option value="oldest">Oldest</option>
-        <option value="az">A–Z</option>
-        <option value="za">Z–A</option>
-      </select>
+      <div className="filters">
+        <select onChange={(e) => setSort(e.target.value)}>
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="A-Z">A-Z</option>
+          <option value="Z-A">Z-A</option>
+        </select>
+      </div>
 
-      {sortedFavs.map((item) => (
-        <div key={item.id} style={{ margin: "10px 0" }}>
-          <h3>{item.title}</h3>
-          <p>{item.show} - {item.season}</p>
-          <small>
-            Added: {new Date(item.addedAt).toLocaleString()}
-          </small>
+      {Object.keys(grouped).map((show) => (
+        <div key={show}>
+          <h3>{show}</h3>
+
+          {grouped[show].map((item) => (
+            <div className="card" key={item.id}>
+              <h4>{item.title}</h4>
+
+              <p>{item.season}</p>
+
+              <p style={{ color: "gray" }}>
+                Added: {new Date(item.addedAt).toDateString()}
+              </p>
+
+              <button onClick={() => removeFav(item.id)}>
+                ❌ Remove
+              </button>
+            </div>
+          ))}
         </div>
       ))}
     </div>
   );
 }
-
-// 🔥 MAIN APP
+// MAIN APP
 function App() {
   const [theme, setTheme] = useState("light");
+  const [currentAudio, setCurrentAudio] = useState(null);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -108,19 +118,19 @@ function App() {
   };
 
   return (
-  <div className={theme} style={{ minHeight: "100vh", width: "100%" }}>
-      <h1>🎧 Podcast App</h1>
+    <div className={theme}>
+      <Layout toggleTheme={toggleTheme} theme={theme}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/favourites" element={<Favourites />} />
+          <Route
+            path="/show/:id"
+            element={<ShowDetails setCurrentAudio={setCurrentAudio} />}
+          />
+        </Routes>
+      </Layout>
 
-      <button onClick={toggleTheme}>
-        {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-      </button>
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/favourites" element={<Favourites />} />
-      </Routes>
-
-      <AudioPlayer />
+      <AudioPlayer currentAudio={currentAudio} />
     </div>
   );
 }

@@ -5,6 +5,7 @@ function AudioPlayer({ currentAudio }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  // PLAY / PAUSE
   const togglePlay = () => {
     if (!audioRef.current) return;
 
@@ -17,9 +18,17 @@ function AudioPlayer({ currentAudio }) {
     setIsPlaying(!isPlaying);
   };
 
+  // AUTO PLAY WHEN NEW AUDIO SELECTED ✅
+  useEffect(() => {
+    if (currentAudio && audioRef.current) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  }, [currentAudio]);
+
+  // PROGRESS BAR
   useEffect(() => {
     const audio = audioRef.current;
-
     if (!audio) return;
 
     const updateProgress = () => {
@@ -33,20 +42,23 @@ function AudioPlayer({ currentAudio }) {
       audio.removeEventListener("timeupdate", updateProgress);
     };
   }, []);
-useEffect(() => {
-  const handleBeforeUnload = (e) => {
-    if (isPlaying) {
-      e.preventDefault();
-      e.returnValue = "";
-    }
-  };
 
-  window.addEventListener("beforeunload", handleBeforeUnload);
+  // CONFIRM BEFORE LEAVING
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isPlaying) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
 
-  return () => {
-    window.removeEventListener("beforeunload", handleBeforeUnload);
-  };
-}, [isPlaying]);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isPlaying]);
+
   return (
     <div className="player">
       <p>{currentAudio ? currentAudio.title : "No audio selected"}</p>
@@ -69,9 +81,6 @@ useEffect(() => {
       />
     </div>
   );
-
-
-
 }
 
 export default AudioPlayer;

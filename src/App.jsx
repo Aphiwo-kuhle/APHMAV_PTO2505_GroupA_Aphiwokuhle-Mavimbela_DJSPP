@@ -7,8 +7,19 @@ import ShowDetails from "./components/ShowDetails";
 import { useNavigate } from "react-router-dom";
 
 // HOME
+
+
 function Home() {
   const navigate = useNavigate();
+  const [shows, setShows] = useState([]);
+
+  useEffect(() => {
+    fetch("https://podcast-api.netlify.app")
+      .then((res) => res.json())
+      .then((data) => {
+        setShows(data);
+      });
+  }, []);
 
   return (
     <div>
@@ -17,15 +28,28 @@ function Home() {
       <Carousel />
 
       <div className="grid">
-        {[1,2,3,4,5,6].map((item) => (
+        {shows.map((show) => (
           <div
             className="card"
-            key={item}
-            onClick={() => navigate(`/show/${item}`)}
+            key={show.id}
+            onClick={() => navigate(`/show/${show.id}`)}
           >
-            <div className="card-img"></div>
-            <h3>Podcast Title</h3>
-            <p>🎧 3 seasons</p>
+            <img
+              src={show.image}
+              alt={show.title}
+              style={{ width: "100%", borderRadius: "10px" }}
+            />
+
+            <h3>{show.title}</h3>
+            <p>🎧 {show.seasons} seasons</p>
+
+            <div>
+              {show.genres.slice(0, 2).map((g, i) => (
+                <span key={i} className="tag">
+                  {g}
+                </span>
+              ))}
+            </div>
           </div>
         ))}
       </div>

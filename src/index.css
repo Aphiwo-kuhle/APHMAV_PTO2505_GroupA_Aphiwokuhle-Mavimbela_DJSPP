@@ -4,7 +4,7 @@
   padding: 0;
     box-sizing: border-box;
   }
-  
+
   /* BODY */
   body {
   font-family: Arial, sans-serif;
@@ -22,7 +22,7 @@
     color: white;
     min-height: 100vh;
   }
-  
+
   /* NAVBAR */
   .navbar {
     display: flex;
@@ -30,12 +30,12 @@
     align-items: center;
     padding: 15px 30px;
   }
-  
+
   .navbar a {
     text-decoration: none;
     margin-right: 15px;
   }
-  
+
   /* GRID */
   .grid {
     display: grid;
@@ -43,7 +43,7 @@
     gap: 20px;
     padding: 20px;
   }
-  
+
   /* CARD */
   .card {
     padding: 15px;
@@ -52,15 +52,15 @@
     cursor: pointer;
     transition: 0.3s;
   }
-  
+
   .light .card {
     background: white;
   }
-  
+
   .card:hover {
     transform: translateY(-5px);
   }
-  
+
   /* IMAGE */
   .card-img {
     height: 140px;
@@ -68,7 +68,7 @@
     border-radius: 10px;
     margin-bottom: 10px;
   }
-  
+
   /* PLAYER */
   .player {
     position: fixed;
@@ -120,4 +120,31 @@ select {
 /* CARD TEXT */
 .card h4 {
   margin-bottom: 5px;
+}
+/* IMAGE */
+.card img {
+  height: 180px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* TAG */
+.tag {
+  background: #6366f1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-right: 5px;
+  font-size: 12px;
+}
+
+/* PLAYER UPGRADE */
+.player {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* PLAYER RANGE */
+.player input {
+  width: 200px;
 }

@@ -3,59 +3,42 @@ import { useState, useEffect } from "react";
 
 function ShowDetails({ setCurrentAudio }) {
   const { id } = useParams();
-  const [isFav, setIsFav] = useState(false);
+  const [show, setShow] = useState(null);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("favourites")) || [];
-    setIsFav(stored.some((item) => item.id === id));
+    fetch(`https://podcast-api.netlify.app/id/${id}`)
+      .then((res) => res.json())
+      .then((data) => setShow(data));
   }, [id]);
 
-  const toggleFavourite = () => {
-    const stored = JSON.parse(localStorage.getItem("favourites")) || [];
-
-    let updated;
-
-    if (isFav) {
-      updated = stored.filter((item) => item.id !== id);
-    } else {
-updated = [
-  ...stored,
-  {
-    id: id,
-    title: "Episode 1",
-    show: "Podcast " + id,
-    season: "Season 1",
-    addedAt: new Date().toISOString()
-  }
-];
-    }
-
-    localStorage.setItem("favourites", JSON.stringify(updated));
-    setIsFav(!isFav);
-  };
+  if (!show) return <p>Loading...</p>;
 
   return (
     <div>
-      <h2>🎧 Podcast {id}</h2>
+      <h2>{show.title}</h2>
 
-      <div className="card">
-        <h3>Episode 1</h3>
+      {show.seasons.map((season) => (
+        <div key={season.season} className="card">
+          <h3>Season {season.season}</h3>
 
-        <button onClick={toggleFavourite}>
-          {isFav ? "💔 Remove Favourite" : "❤️ Add Favourite"}
-        </button>
+          {season.episodes.map((ep) => (
+            <div key={ep.episode}>
+              <p>{ep.title}</p>
 
-        <button
-          onClick={() =>
-            setCurrentAudio({
-              title: "Episode 1",
-              url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-            })
-          }
-        >
-          ▶ Play
-        </button>
-      </div>
+              <button
+                onClick={() =>
+                  setCurrentAudio({
+                    title: ep.title,
+                    url: ep.file
+                  })
+                }
+              >
+                ▶ Play
+              </button>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

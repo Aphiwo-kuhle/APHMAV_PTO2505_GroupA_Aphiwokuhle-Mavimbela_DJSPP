@@ -5,7 +5,6 @@ function AudioPlayer({ currentAudio }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // PLAY / PAUSE
   const togglePlay = () => {
     if (!audioRef.current) return;
 
@@ -18,15 +17,13 @@ function AudioPlayer({ currentAudio }) {
     setIsPlaying(!isPlaying);
   };
 
-  // AUTO PLAY WHEN NEW AUDIO SELECTED ✅
-  useEffect(() => {
-    if (currentAudio && audioRef.current) {
-      audioRef.current.play();
-      setIsPlaying(true);
-    }
-  }, [currentAudio]);
+  const handleSeek = (e) => {
+    const audio = audioRef.current;
+    const newTime = (e.target.value / 100) * audio.duration;
+    audio.currentTime = newTime;
+    setProgress(e.target.value);
+  };
 
-  // PROGRESS BAR
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -43,7 +40,13 @@ function AudioPlayer({ currentAudio }) {
     };
   }, []);
 
-  // CONFIRM BEFORE LEAVING
+  useEffect(() => {
+    if (currentAudio && audioRef.current) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  }, [currentAudio]);
+
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (isPlaying) {
@@ -60,26 +63,19 @@ function AudioPlayer({ currentAudio }) {
   }, [isPlaying]);
 
   return (
-    <div className="player">
-      <p>{currentAudio ? currentAudio.title : "No audio selected"}</p>
+   <div className="player">
+  <p>{currentAudio?.title || "No audio selected"}</p>
 
-      <audio ref={audioRef} src={currentAudio?.url}></audio>
+  <div>
+    <button onClick={togglePlay}>
+      {isPlaying ? "Pause" : "Play"}
+    </button>
 
-      <button onClick={togglePlay}>
-        {isPlaying ? "Pause" : "Play"}
-      </button>
+    <input type="range" value={progress} onChange={handleSeek} />
+  </div>
 
-      <input
-        type="range"
-        value={progress}
-        onChange={(e) => {
-          const audio = audioRef.current;
-          const newTime = (e.target.value / 100) * audio.duration;
-          audio.currentTime = newTime;
-          setProgress(e.target.value);
-        }}
-      />
-    </div>
+  <audio ref={audioRef} src={currentAudio?.url}></audio>
+</div>
   );
 }
 

@@ -4,19 +4,19 @@ function Layout({ children, toggleTheme, theme }) {
   return (
     <div>
       <nav className="navbar">
-        <h2>🎧 PodcastApp</h2>
+        <h2 className="logo">🎧 PodcastApp</h2>
 
-        <div style={{ display: "flex", gap: "15px" }}>
+        <div className="nav-links">
           <Link to="/">Home</Link>
           <Link to="/favourites">Favourites</Link>
 
-          <button onClick={toggleTheme}>
+          <button className="theme-btn" onClick={toggleTheme}>
             {theme === "light" ? "🌙" : "☀️"}
           </button>
         </div>
       </nav>
 
-      <div>{children}</div>
+      <main className="content">{children}</main>
     </div>
   );
 }

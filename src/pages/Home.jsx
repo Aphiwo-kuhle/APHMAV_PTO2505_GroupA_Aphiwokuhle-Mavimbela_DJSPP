@@ -1,51 +1,48 @@
-import Carousel from "../components/Carousel";
+import { useEffect, useState } from "react";
 
 function Home({ setCurrentAudio, favorites, toggleFavorite }) {
-  const episodes = [
-    {
-      id: 1,
-      title: "Episode 12: The Future of AI",
-      show: "Tech Talks",
-      season: 3,
-      episode: 12,
-      url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-    },
-    {
-      id: 2,
-      title: "Episode 8: Startup Success Stories",
-      show: "Business Daily",
-      season: 2,
-      episode: 8,
-      url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
-    }
-  ];
+  const [shows, setShows] = useState([]);
+
+  useEffect(() => {
+    fetch("https://podcast-api.netlify.app")
+      .then((res) => res.json())
+      .then((data) => setShows(data));
+  }, []);
 
   return (
-    <div>
-      {/* 🔥 CAROUSEL */}
-      <Carousel />
+    <div><h2 style={{ padding: "20px", fontSize: "24px" }}>
+  🎧 Spotify Style Podcast App
+</h2>
 
-      {/* 🎧 EPISODES GRID */}
       <div className="grid">
-        {episodes.map((ep) => (
-          <div key={ep.id} className="card">
-            <img
-              src="https://picsum.photos/300/200"
-              alt="podcast"
-              style={{ width: "100%", borderRadius: "10px" }}
-            />
+        {shows.map((show) => (
+          <div key={show.id} className="card">
+            <img src={show.image} alt={show.title} />
 
-            <h3>{ep.title}</h3>
-            <p>{ep.show}</p>
-            <p>Season {ep.season} • Episode {ep.episode}</p>
+            <h3>{show.title}</h3>
+            <p>{show.genres?.join(", ")}</p>
 
             <div className="actions">
-              <button onClick={() => setCurrentAudio(ep)}>
-                ▶ Play
+              <button
+                onClick={() =>
+                  setCurrentAudio({
+                    title: show.title,
+                    url: show.seasons[0]?.episodes[0]?.file
+                  })
+                }
+              >
+                ▶
               </button>
 
-              <button onClick={() => toggleFavorite(ep)}>
-                {favorites.find((f) => f.id === ep.id) ? "❤️" : "🤍"}
+              <button
+                onClick={() =>
+                  toggleFavorite({
+                    id: show.id,
+                    title: show.title
+                  })
+                }
+              >
+                {favorites.find((f) => f.id === show.id) ? "❤️" : "🤍"}
               </button>
             </div>
           </div>

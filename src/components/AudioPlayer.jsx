@@ -5,6 +5,7 @@ function AudioPlayer({ currentAudio }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  // ▶ PLAY / PAUSE
   const togglePlay = () => {
     if (!audioRef.current) return;
 
@@ -17,13 +18,7 @@ function AudioPlayer({ currentAudio }) {
     setIsPlaying(!isPlaying);
   };
 
-  const handleSeek = (e) => {
-    const audio = audioRef.current;
-    const newTime = (e.target.value / 100) * audio.duration;
-    audio.currentTime = newTime;
-    setProgress(e.target.value);
-  };
-
+  // ⏱ UPDATE PROGRESS
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -40,6 +35,7 @@ function AudioPlayer({ currentAudio }) {
     };
   }, []);
 
+  // 🔁 AUTO PLAY WHEN NEW AUDIO
   useEffect(() => {
     if (currentAudio && audioRef.current) {
       audioRef.current.play();
@@ -47,6 +43,7 @@ function AudioPlayer({ currentAudio }) {
     }
   }, [currentAudio]);
 
+  // ⚠ LEAVE WARNING
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (isPlaying) {
@@ -62,20 +59,30 @@ function AudioPlayer({ currentAudio }) {
     };
   }, [isPlaying]);
 
+  // 🎯 SEEK FUNCTION (ONLY ONE!)
+  const handleSeek = (e) => {
+    const audio = audioRef.current;
+    const newTime = (e.target.value / 100) * audio.duration;
+    audio.currentTime = newTime;
+    setProgress(e.target.value);
+  };
+
   return (
-   <div className="player">
-  <p>{currentAudio?.title || "No audio selected"}</p>
+    <div className="player">
+      <p>{currentAudio?.title || "No audio selected"}</p>
 
-  <div>
-    <button onClick={togglePlay}>
-      {isPlaying ? "Pause" : "Play"}
-    </button>
+      <button onClick={togglePlay}>
+        {isPlaying ? "⏸" : "▶"}
+      </button>
 
-    <input type="range" value={progress} onChange={handleSeek} />
-  </div>
+      <input
+        type="range"
+        value={progress}
+        onChange={handleSeek}
+      />
 
-  <audio ref={audioRef} src={currentAudio?.url}></audio>
-</div>
+      <audio ref={audioRef} src={currentAudio?.url}></audio>
+    </div>
   );
 }
 

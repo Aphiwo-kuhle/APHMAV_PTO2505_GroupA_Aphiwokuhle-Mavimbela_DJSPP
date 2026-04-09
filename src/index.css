@@ -1,115 +1,87 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-}
-
-/* THEMES */
-.light {
-  background: #f8fafc;
-  color: #111;
-}
-
-.dark {
-  background: #0f172a;
+  background: #121212;
   color: white;
 }
 
 /* NAVBAR */
-/* NAVBAR UPGRADE */
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background: linear-gradient(90deg, #111, #1e293b);
-    color: white;
+  padding: 20px;
+  background: #000;
 }
-
-.logo {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.nav-links {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  }
 
 .nav-links a {
   color: white;
   text-decoration: none;
-  font-weight: 500;
+  margin-right: 20px;
 }
 
-.nav-links a:hover {
-  color: #38bdf8;
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px;
 }
 
-.theme-btn {
-  background: #38bdf8;
-  color: black;
-}
-
-/* PAGE CONTENT */
-.content {
-  padding-bottom: 80px;
-  /* space for player */
-}
-
-/* CARD FINAL LOOK */
+/* CARD (SPOTIFY STYLE) */
 .card {
-  background: white;
-  border-radius: 15px;
+  background: #181818;
+  border-radius: 12px;
   padding: 15px;
   transition: 0.3s;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-.card h3 {
-  margin: 10px 0;
 }
 
 .card:hover {
+  background: #282828;
   transform: scale(1.05);
 }
 
-/* ACTION BUTTONS */
+.card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* TEXT */
+.card h3 {
+  margin: 10px 0 5px;
+  font-size: 16px;
+}
+
+.card p {
+  font-size: 13px;
+  color: #aaa;
+}
+
+/* BUTTONS */
 .actions {
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
 }
 
-/* BUTTON STYLE */
 button {
+  background: #1db954;
   border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 8px 10px;
+  border-radius: 50%;
   cursor: pointer;
-    background: #0ea5e9;
-    color: white;
-    font-weight: bold;
 }
 
 button:hover {
-  opacity: 0.85;
+  transform: scale(1.1);
 }
 
-/* PLAYER FINAL LOOK */
+/* PLAYER */
 .player {
   position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #020617;
-    color: white;
-    padding: 15px 20px;
+  bottom: 0;
+  width: 100%;
+  background: black;
+  padding: 15px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.player input {
-  width: 200px;
 }

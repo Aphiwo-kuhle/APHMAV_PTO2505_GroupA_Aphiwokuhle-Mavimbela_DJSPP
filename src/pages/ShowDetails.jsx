@@ -5,12 +5,16 @@ function ShowDetails({ setCurrentAudio }) {
   const { id } = useParams();
   const [show, setShow] = useState(null);
 
-  useEffect(() => {
-    fetch(`https://podcast-api.netlify.app/id/${id}`)
-      .then((res) => res.json())
-      .then((data) => setShow(data));
-  }, [id]);
 
+
+const handleSeek = (e) => {
+  const audio = audioRef.current;
+
+  if (!audio || !audio.duration) return; // 🔥 important fix
+
+  const newTime = (e.target.value / 100) * audio.duration;
+  audio.currentTime = newTime;
+};
   if (!show) return <p>Loading...</p>;
 
   return (

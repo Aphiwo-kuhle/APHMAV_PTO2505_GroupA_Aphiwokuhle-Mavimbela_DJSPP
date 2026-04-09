@@ -15,20 +15,21 @@ function App() {
   );
 
   const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "light"
+    localStorage.getItem("theme") || "dark"
   );
 
-  // SAVE FAVORITES
+  // ✅ SAVE FAVORITES
   useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
 
-  // THEME
+  // ✅ THEME
   useEffect(() => {
     document.body.className = theme;
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // ❤️ FAVORITE
   const toggleFavorite = (episode) => {
     const exists = favorites.find((f) => f.id === episode.id);
 
@@ -39,8 +40,9 @@ function App() {
     }
   };
 
+  // 🌗 THEME TOGGLE
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (

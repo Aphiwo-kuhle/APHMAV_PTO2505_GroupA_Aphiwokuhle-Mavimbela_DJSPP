@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function Layout({ children, toggleTheme, theme }) {
   return (
-    <div>
+    <div className="app">
       <nav className="navbar">
         <h2 className="logo">🎧 PodcastApp</h2>
 
@@ -11,12 +11,12 @@ function Layout({ children, toggleTheme, theme }) {
           <Link to="/favourites">Favourites</Link>
 
           <button className="theme-btn" onClick={toggleTheme}>
-            {theme === "light" ? "🌙" : "☀️"}
+            {theme === "dark" ? "☀️" : "🌙"}
           </button>
         </div>
       </nav>
 
-      <main className="content">{children}</main>
+      <main className="main-content">{children}</main>
     </div>
   );
 }

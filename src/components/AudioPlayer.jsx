@@ -5,7 +5,6 @@ function AudioPlayer({ currentAudio }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // ▶ PLAY / PAUSE
   const togglePlay = () => {
     if (!audioRef.current) return;
 
@@ -18,24 +17,21 @@ function AudioPlayer({ currentAudio }) {
     setIsPlaying(!isPlaying);
   };
 
-  // ⏱ UPDATE PROGRESS
+  // UPDATE PROGRESS
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
 
-    const updateProgress = () => {
-      const percent = (audio.currentTime / audio.duration) * 100;
-      setProgress(percent || 0);
+    const update = () => {
+      if (!audio.duration) return;
+      setProgress((audio.currentTime / audio.duration) * 100);
     };
 
-    audio.addEventListener("timeupdate", updateProgress);
+    audio?.addEventListener("timeupdate", update);
 
-    return () => {
-      audio.removeEventListener("timeupdate", updateProgress);
-    };
+    return () => audio?.removeEventListener("timeupdate", update);
   }, []);
 
-  // 🔁 AUTO PLAY WHEN NEW AUDIO
+  // AUTO PLAY
   useEffect(() => {
     if (currentAudio && audioRef.current) {
       audioRef.current.play();
@@ -43,28 +39,12 @@ function AudioPlayer({ currentAudio }) {
     }
   }, [currentAudio]);
 
-  // ⚠ LEAVE WARNING
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      if (isPlaying) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [isPlaying]);
-
-  // 🎯 SEEK FUNCTION (ONLY ONE!)
+  // SEEK FIX
   const handleSeek = (e) => {
     const audio = audioRef.current;
-    const newTime = (e.target.value / 100) * audio.duration;
-    audio.currentTime = newTime;
-    setProgress(e.target.value);
+    if (!audio || !audio.duration) return;
+
+    audio.currentTime = (e.target.value / 100) * audio.duration;
   };
 
   return (
@@ -72,7 +52,7 @@ function AudioPlayer({ currentAudio }) {
       <p>{currentAudio?.title || "No audio selected"}</p>
 
       <button onClick={togglePlay}>
-        {isPlaying ? "⏸" : "▶"}
+        {isPlaying ? "Pause" : "Play"}
       </button>
 
       <input
@@ -81,7 +61,7 @@ function AudioPlayer({ currentAudio }) {
         onChange={handleSeek}
       />
 
-      <audio ref={audioRef} src={currentAudio?.url}></audio>
+      <audio ref={audioRef} src={currentAudio?.url} />
     </div>
   );
 }
